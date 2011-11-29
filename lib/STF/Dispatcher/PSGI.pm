@@ -285,7 +285,7 @@ STF::Dispatcher::PSGI - Pluggable STF Dispatcher Interface
     use STF::Dispatcher::PSGI;
 
     my $object = ...;
-    STF::Dispatcher::PSGI->new( impl => $object )->psgi_app;
+    STF::Dispatcher::PSGI->new( impl => $object )->to_app;
 
 =head1 DESCRIPTION
 
@@ -300,7 +300,7 @@ For example, you can use STF::Dispatcher::Impl::Hash (which stores all data in a
     use STF::Dispatcher::Impl::Hash;
 
     my $object = STF::Dispatcher::Impl::Hash->new();
-    STF::Dispatcher::PSGI->new( impl => $object )->psgi_app;
+    STF::Dispatcher::PSGI->new( impl => $object )->to_app;
 
 And then you can do something like below in your application test to start a dummy STF server with Plack:
 
@@ -319,6 +319,16 @@ And then you can do something like below in your application test to start a dum
 
 Of course, this is not only useful for testing, but it allows you to create a STF clone with a completely different backend without having to reimplement the entire STF protocol.
 
+=head1 METHODS
+
+=head2 $self = $class-E<gt>( impl =E<gt> $object )
+
+Creates a new instance of STF::Dispatcher::PSGI. B<impl> must be the imeplementation object (L<see below|/THE "IMPLEMENTATION" OBJECT>).
+
+=head2 $psgi_app = $self-E<gt>to_app()
+
+Creates a PSGI app.
+
 =head1 THE "IMPLEMENTATION" OBJECT
 
 As described elsewhere, this module by itself DOES NOT work as a real STF server. This module will parse the request and extract the required data from that request, but has no idea how to actually use it. You must therefore provide it with an "implementation".
@@ -333,7 +343,7 @@ See the documentation for that module for details.
 
 =head1 LIST OF REQUIRED METHODS IN THE IMPLEMENTATION
 
-=head2 $object = $impl->E<gt>create_bucket(%args)
+=head2 $object = $impl-E<gt>create_bucket(%args)
 
 Used to create a bucket.
 
@@ -341,17 +351,17 @@ The implementation's get_bucket method will receive the following named paramete
 
 =over 4
 
-=item B<request> => $object
+=item B<request> =E<gt> $object
 
 Plack::Request for this request
 
-=item B<bucket_name> => $string
+=item B<bucket_name> =E<gt> $string
 
 The name of the bucket
 
 =back
 
-=head2 $object = $impl->E<gt>get_bucket(%args)
+=head2 $object = $impl-E<gt>get_bucket(%args)
 
 Used to retrieve a bucket. If there are no buckets that match the request, you should return undef.
 
@@ -359,17 +369,17 @@ The implementation's get_bucket method will receive the following named paramete
 
 =over 4
 
-=item B<request> => $object
+=item B<request> =E<gt> $object
 
 Plack::Request for this request
 
-=item B<bucket_name> => $string
+=item B<bucket_name> =E<gt> $string
 
 The name of the bucket
 
 =back
 
-=head2 $object = $impl->E<gt>get_object(%args)
+=head2 $object = $impl-E<gt>get_object(%args)
 
 Used to retrieve an object. If there are no object that matcht the request, you should return undef.
 
@@ -379,19 +389,19 @@ The implementation's get_object method will receive the following named paramete
 
 =over 4
 
-=item B<request> => $object
+=item B<request> =E<gt> $object
 
 Plack::Request for this request
 
-=item B<bucket> => $object
+=item B<bucket> =E<gt> $object
 
 The bucket returned by get_bucket().
 
-=item B<object_name> => $string
+=item B<object_name> =E<gt> $string
 
 The name of the object.
 
-=item B<force_master> => $bool
+=item B<force_master> =E<gt> $bool
 
 Set to true if X-STF-Force-MasterDB header was sent
 
@@ -401,53 +411,53 @@ Set to true if X-STF-Force-MasterDB header was sent
 
 =over 4
 
-=item B<request> => $object
+=item B<request> =E<gt> $object
 
 Plack::Request for this request
 
-=item B<bucket> => $object
+=item B<bucket> =E<gt> $object
 
 The bucket returned by get_bucket().
 
-=item B<recursive> => $bool
+=item B<recursive> =E<gt> $bool
 
 Set to true if the X-STF-Recursive-Delete header was specified
 
 =back
 
-=head2 $impl->E<gt>create_object(%args)
+=head2 $impl-E<gt>create_object(%args)
 
 =over 4
 
-=item B<request> => $object
+=item B<request> =E<gt> $object
 
 Plack::Request for this request
 
-=item B<bucket> => $object
+=item B<bucket> =E<gt> $object
 
 The bucket returned by get_bucket().
 
-=item B<object_name> => $string
+=item B<object_name> =E<gt> $string
 
 The name of the object.
 
-=item B<consistency> => $int
+=item B<consistency> =E<gt> $int
 
 The minimum consistency (number of replicas that must be created by the end of create_object call.
 
-=item B<size> => $int
+=item B<size> =E<gt> $int
 
 The size of the object
 
-=item B<suffix> => $string
+=item B<suffix> =E<gt> $string
 
 The suffix to be used for the object. defaults to ".dat"
 
-=item B<input> => $handle
+=item B<input> =E<gt> $handle
 
 The input handle to read the data from
 
-=item B<replicas> => $int
+=item B<replicas> =E<gt> $int
 
 Number of replicas that the system should keep in the end.
 
@@ -457,19 +467,19 @@ Number of replicas that the system should keep in the end.
 
 =over 4
 
-=item B<replicas> => $int
+=item B<replicas> =E<gt> $int
 
 Number of replicas that the system should keep in the end.
 
-=item B<request> => $object
+=item B<request> =E<gt> $object
 
 Plack::Request for this request
 
-=item B<bucket> => $object
+=item B<bucket> =E<gt> $object
 
 The bucket returned by get_bucket().
 
-=item B<object_name> => $string
+=item B<object_name> =E<gt> $string
 
 The name of the object.
 
@@ -479,15 +489,15 @@ The name of the object.
 
 =over 4
 
-=item B<request> => $object
+=item B<request> =E<gt> $object
 
 Plack::Request for this request
 
-=item B<bucket> => $object
+=item B<bucket> =E<gt> $object
 
 The bucket returned by get_bucket().
 
-=item B<object_name> => $string
+=item B<object_name> =E<gt> $string
 
 The name of the object.
 
