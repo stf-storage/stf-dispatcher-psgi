@@ -9,6 +9,8 @@ requires 'Plack::Request';
 requires 'Scalar::Util';
 requires 'HTTP::Date';
 
+recommends 'Net::STF::Client';
+
 test_requires 'HTTP::Request::Common';
 test_requires 'Test::More';
 
