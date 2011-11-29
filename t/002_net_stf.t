@@ -28,18 +28,19 @@ subtest 'synopsis' => sub {
     my $opts = {};
 
     my $stf = Net::STF::Client->new({
-        base => $stf_uri,
-        username => 'user',
-        password => 'Your Password',
+        url        => $stf_uri,
+        username   => 'user',
+        password   => 'Your Password',
         repl_count => 3,
     });
+
     my $bucket = $stf->create_bucket('bucket') or die $stf->errstr;
     $bucket->put_object( $key, $filename, $opts ) or die $bucket->errstr;
     my $obj = $bucket->get_object( $key );
 
     ok $obj;
     is $obj->content, do { open my $fh, '<', $0; local $/; <$fh> }, "Content matches";
-    is $obj->bucket->name, "bucket";
+    is $obj->bucket_name, "bucket";
 
     $bucket->delete_object( $key );
     $obj = $bucket->get_object( $key );
