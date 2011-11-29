@@ -60,7 +60,7 @@ sub get_object {
 
     if ( my $ims = $args->{request}->header('if-modified-since') ) {
         if ( $object->modified_on > HTTP::Date::str2time( $ims ) ) {
-            return Plack::Response->new( 304, [], [] );
+            STF::Dispatcher::PSGI::HTTPException->throw( 304, [], [] );
         }
     }
     return $object;

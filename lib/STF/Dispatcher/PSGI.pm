@@ -6,6 +6,7 @@ use HTTP::Date ();
 use Plack::Request;
 use Plack::Middleware::HTTPExceptions;
 use Scalar::Util ();
+use STF::Dispatcher::PSGI::HTTPException;
 use Class::Accessor::Lite
     rw => [ qw(impl) ]
 ;
@@ -187,12 +188,6 @@ sub delete_object {
             return $req->new_response(500, ["Content-Type" => "text/plain"], ["Failed to delete bucket " . $bucket_name]);
         }
 
-        if ( my $klass = Scalar::Util::blessed($ret) ) {
-            if ($klass->isa('Plack::Response') ) {
-                return $ret;
-            }
-        }
-
         return $req->new_response( 204, [], [] );
     }
 
@@ -237,11 +232,6 @@ sub get_object {
     if (! $object) {
         return $req->new_response( 404, [], [ "Failed to get object " . $req->path ] );
     }
-    if ( my $klass = Scalar::Util::blessed($object) ) {
-        if ($klass->isa('Plack::Response') ) {
-            return $object;
-        }
-    }
 
     my @headers;
     if ( my $ct = $object->can('content_type') ) {
@@ -277,12 +267,6 @@ sub modify_object {
                        STF_DEFAULT_REPLICATION_COUNT || 0,
         request     => $req,
     } );
-
-    if ( my $klass = Scalar::Util::blessed($ret) ) {
-        if ($klass->isa('Plack::Response') ) {
-            return $ret;
-        }
-    }
 
     return $req->new_response(204, [], []);
 }

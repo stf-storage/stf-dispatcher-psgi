@@ -74,7 +74,7 @@ sub get_object {
     my @stat = stat($file);
     if ( my $ims = $args->{request}->header('if-modified-since') ) {
         if ( $stat[9] > HTTP::Date::str2time( $ims ) ) {
-            return Plack::Response->new( 304, [], [] );
+            return STF::Dispatcher::PSGI::HTTPException->throw( 304, [], [] );
         }
     }
 
