@@ -1,6 +1,9 @@
 Changes
 =======
 
+1.03 - Nov 30 2011
+    * Fix documentation. No code change
+
 1.02 - Nov 30 2011
     * Fix t/002_net_stf.t to reflect the proper Net::STF::Client interface
 
