@@ -15,6 +15,7 @@ use constant +{
     STF_REPLICATION_HEADER_DEPRECATED => 'X-Replication-Count',
     STF_RECURSIVE_DELETE_HEADER       => 'X-STF-Recursive-Delete',
     STF_CONSISTENCY_HEADER            => "X-STF-Consistency",
+    # XXX This below is should be deprecated. don't use
     STF_FORCE_MASTER_HEADER           => "X-STF-Force-MasterDB",
     STF_DELETED_OBJECTS_HEADER        => "X-STF-Deleted-Objects",
     STF_DEFAULT_REPLICATION_COUNT     => 2,
