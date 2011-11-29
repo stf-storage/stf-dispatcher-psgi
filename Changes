@@ -1,6 +1,9 @@
 Changes
 =======
 
+1.02 - Nov 30 2011
+    * Fix t/002_net_stf.t to reflect the proper Net::STF::Client interface
+
 1.01 - Nov 30 2011
     * Fix docs
     * Return values from implementation's methods may not be Plack::Response
