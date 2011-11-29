@@ -1,6 +1,11 @@
 Changes
 =======
 
+1.01 - Nov 30 2011
+    * Fix docs
+    * Return values from implementation's methods may not be Plack::Response
+      objects. Just use an HTTP exception (STF::Dispatcher::PSGI::HTTPException)
+
 1.00 - Nov 29 2011
     * Initial release
 
