@@ -1,6 +1,9 @@
 Changes
 =======
 
+1.04 - Dec 02 2011
+    * Fix how we rewind/seek the input buffer
+
 1.03 - Nov 30 2011
     * Fix documentation. No code change
 
