@@ -8,7 +8,11 @@ sub throw {
 }
 
 sub as_psgi {
-    return [ @{$_[0]} ];
+    my @res = @{$_[0]};
+    $res[0] ||= 500;
+    $res[1] ||= [];
+    $res[2] ||= [];
+    return \@res;
 }
 
 1;
