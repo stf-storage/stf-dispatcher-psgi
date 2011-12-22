@@ -1,6 +1,12 @@
 Changes
 =======
 
+1.05 - Dec 22 2011
+    * Put a few more debug outputs.
+    * Give default values for HTTPException->as_psgi so that Middleware::Lint
+      is happy. This can be avoided if you set PLACK_ENV=production, but
+      you wil be very unhappy if you're hit, so we just gave it defaults
+
 1.04 - Dec 02 2011
     * Fix how we rewind/seek the input buffer
 
