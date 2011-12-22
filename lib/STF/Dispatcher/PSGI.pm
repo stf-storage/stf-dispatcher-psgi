@@ -134,9 +134,10 @@ sub create_object {
     $suffix ||= 'dat';
 
     my $input = $req->input;
-    if ( my $code = $input->can('rewind') ) {
+    my $code;
+    if ( $code = $input->can('rewind') ) {
         $code->( $input );
-    } elsif ( my $code = $input->can('seek') ) {
+    } elsif ( $code = $input->can('seek') ) {
         $code->( $input, 0, 0 );
     }
 
