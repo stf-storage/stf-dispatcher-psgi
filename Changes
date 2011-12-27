@@ -1,6 +1,9 @@
 Changes
 =======
 
+1.06 - Dec 27 2011
+    * Do not include path names in error responses
+
 1.05 - Dec 22 2011
     * Put a few more debug outputs.
     * Give default values for HTTPException->as_psgi so that Middleware::Lint
