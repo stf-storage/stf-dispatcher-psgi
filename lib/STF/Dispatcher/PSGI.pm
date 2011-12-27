@@ -79,7 +79,7 @@ sub parse_names {
     my ($self, $req) = @_;
     if ( $req->path !~ m{^/([^/]+)(?:/(.+)$)?} ) {
         if (STF_DEBUG) {
-            print STDERR "[Dispatcher] Could not parse bucket/object name from " . $req->path . "\n";
+            print STDERR "[Dispatcher] Could not parse bucket/object name from given path\n";
         }
         return ();
     }
@@ -123,7 +123,7 @@ sub create_object {
         request     => $req
     } );
     if (! $bucket) {
-        return $req->new_response(500, ["Content-Type" => "text/plain"], [ "Failed to find bucket for " . $req->path ] );
+        return $req->new_response(500, ["Content-Type" => "text/plain"], [ "Failed to find bucket" ] );
     }
     if (! $object_name) {
         return $req->new_response(400, [], ["Could not extract object name"]);
@@ -176,9 +176,9 @@ sub delete_object {
     } );
     if (! $bucket) {
         if ( ! $object_name ) {
-            return $req->new_response(404, ["Content-Type" => "text/plain"], [ "No such bucket $bucket_name" ] );
+            return $req->new_response(404, ["Content-Type" => "text/plain"], [ "No such bucket" ] );
         } else {
-            return $req->new_response(500, ["Content-Type" => "text/plain"], [ "Failed to find bucket for " . $req->path ] );
+            return $req->new_response(500, ["Content-Type" => "text/plain"], [ "Failed to find bucket" ] );
         }
     }
 
@@ -196,7 +196,7 @@ sub delete_object {
             request   => $req,
         } );
         if (! $ret) {
-            return $req->new_response(500, ["Content-Type" => "text/plain"], ["Failed to delete bucket " . $bucket_name]);
+            return $req->new_response(500, ["Content-Type" => "text/plain"], ["Failed to delete bucket" ]);
         }
 
         return $req->new_response( 204, [], [] );
@@ -208,7 +208,7 @@ sub delete_object {
         request     => $req,
     });
     if (! $is_valid) {
-        return $req->new_response(404, [], [ "No such object " . $req->path ]);
+        return $req->new_response(404, [], [ "No such object" ]);
     }
 
     if ($self->impl->delete_object( {
@@ -218,7 +218,7 @@ sub delete_object {
     } )) {
         return $req->new_response( 204, [], [] );
     } else {
-        return $req->new_response( 500, [ "Content-Type" ], [ "Failed to delete " . $req->path ] );
+        return $req->new_response( 500, [ "Content-Type" ], [ "Failed to delete  object" ] );
     }
 }
 
@@ -231,7 +231,7 @@ sub get_object {
         request     => $req
     } );
     if (! $bucket) {
-        return $req->new_response(500, ["Content-Type" => "text/plain"], [ "Failed to find bucket for " . $req->path ] );
+        return $req->new_response(500, ["Content-Type" => "text/plain"], [ "Failed to find bucket" ] );
     }
 
     my $object = $self->impl->get_object( {
@@ -241,7 +241,7 @@ sub get_object {
         force_master => $req->header( STF_FORCE_MASTER_HEADER ) || 0,
     } );
     if (! $object) {
-        return $req->new_response( 404, [], [ "Failed to get object " . $req->path ] );
+        return $req->new_response( 404, [], [ "Failed to get object" ] );
     }
 
     my @headers;
@@ -267,7 +267,7 @@ sub modify_object {
         request     => $req
     } );
     if (! $bucket) {
-        return $req->new_response(500, ["Content-Type" => "text/plain"], [ "Failed to find bucket for " . $req->path ] );
+        return $req->new_response(500, ["Content-Type" => "text/plain"], [ "Failed to find bucket" ] );
     }
 
     my $ret = $self->impl->modify_object( {
