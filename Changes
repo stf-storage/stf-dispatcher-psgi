@@ -1,6 +1,10 @@
 Changes
 =======
 
+1.07 - Dec 27 2011
+    * Add X-Content-Type-Options: nosniff by default. If you must disable it,
+      set nosniff_header => 0 in the constructor call
+
 1.06 - Dec 27 2011
     * Do not include path names in error responses
 

@@ -1,6 +1,6 @@
 package STF::Dispatcher::PSGI;
 use strict;
-our $VERSION = '1.06';
+our $VERSION = '1.07';
 use Carp ();
 use HTTP::Date ();
 use Plack::Request;
