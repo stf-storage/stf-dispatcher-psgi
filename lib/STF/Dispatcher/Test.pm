@@ -100,6 +100,7 @@ sub run_tests {
         GET "http://127.0.0.1/$bucket_name/$object_name",
     );
     is $res->content, $content, "content matches";
+    is $res->header('X-Content-Type-Options'), 'nosniff', "nosniff is on";
 
     if ( my $last_mod = $res->header('Last-Modified') ) {
         my $last_mod_t = HTTP::Date::str2time($last_mod);
@@ -110,6 +111,7 @@ sub run_tests {
         if ( ! is $res->code, 200, "code is 200") {
             diag $res->as_string;
         }
+        is $res->header('X-Content-Type-Options'), 'nosniff', "nosniff is on";
 
         $res = $cb->(
             GET "http://127.0.0.1/$bucket_name/$object_name",
@@ -172,6 +174,7 @@ sub run_tests {
     if (! is $res->code, 404, "get after delete is 404" ) {
         diag $res->as_string;
     }
+    is $res->header('X-Content-Type-Options'), 'nosniff', "nosniff is on";
 
     # non-existent bucket deletion should fail
     $res = $cb->(

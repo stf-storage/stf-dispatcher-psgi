@@ -5,6 +5,7 @@ all_from 'lib/STF/Dispatcher/PSGI.pm';
 
 requires 'Class::Accessor::Lite';
 requires 'Plack';
+requires 'Plack::Middleware::Header';
 requires 'Plack::Request';
 requires 'Scalar::Util';
 requires 'HTTP::Date';

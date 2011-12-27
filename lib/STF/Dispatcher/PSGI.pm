@@ -8,7 +8,7 @@ use Plack::Middleware::HTTPExceptions;
 use Scalar::Util ();
 use STF::Dispatcher::PSGI::HTTPException;
 use Class::Accessor::Lite
-    rw => [ qw(impl) ]
+    rw => [ qw(impl nosniff_header) ]
 ;
 use constant +{
     STF_DEBUG                         => $ENV{STF_DEBUG},
@@ -32,13 +32,20 @@ sub new {
             Carp::croak("$impl does not implement $method");
     }
 
-    bless { %args }, $class;
+    bless { nosniff_header => 1, %args }, $class;
 }
 
 sub to_app {
     my $self = shift;
     my $app = sub { $self->handle_psgi(@_) };
-    Plack::Middleware::HTTPExceptions->wrap( $app );
+    $app = Plack::Middleware::HTTPExceptions->wrap( $app );
+    if ($self->nosniff_header) {
+        require Plack::Middleware::Header;
+        $app = Plack::Middleware::Header->wrap( $app,
+            set => [ 'X-Content-Type-Options' => 'nosniff' ]
+        );
+    }
+    $app;
 }
 
 sub handle_psgi {
@@ -332,9 +339,21 @@ Of course, this is not only useful for testing, but it allows you to create a ST
 
 =head1 METHODS
 
-=head2 $self = $class-E<gt>( impl =E<gt> $object )
+=head2 $self = $class-E<gt>( impl =E<gt> $object [, %args ] )
 
 Creates a new instance of STF::Dispatcher::PSGI. B<impl> must be the imeplementation object (L<see below|/THE "IMPLEMENTATION" OBJECT>).
+
+Other arguments may include:
+
+=over 4
+
+=item nosniff_header : Bool
+
+Automatically adds X-Content-Type-Options: nosniff to the response.
+
+By default nosniff_header is enabled.
+
+=back
 
 =head2 $psgi_app = $self-E<gt>to_app()
 
