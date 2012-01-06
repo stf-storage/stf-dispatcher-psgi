@@ -117,7 +117,7 @@ sub create_bucket {
         return $req->new_response( 500, [], [ "Failed to create bucket" ] );
     }
 
-    return $req->new_response( 201, [], [ "Created $bucket_name" ] );
+    return $req->new_response( 201, [], [ "Created bucket" ] );
 }
 
 sub create_object {
@@ -192,11 +192,6 @@ sub delete_object {
     # if there's no object_name, then this is a request to delete
     # the bucket, not an object
     if ( ! $object_name ) {
-        my $bucket = $self->impl->get_bucket( {
-            bucket_name => $bucket_name,
-            request     => $req,
-        } );
-
         my $ret = $self->impl->delete_bucket( {
             bucket    => $bucket,
             recursive => $req->header( STF_RECURSIVE_DELETE_HEADER ) || 0,
@@ -225,7 +220,7 @@ sub delete_object {
     } )) {
         return $req->new_response( 204, [], [] );
     } else {
-        return $req->new_response( 500, [ "Content-Type" ], [ "Failed to delete  object" ] );
+        return $req->new_response( 500, [ "Content-Type" => "text/plain" ], [ "Failed to delete object" ] );
     }
 }
 
