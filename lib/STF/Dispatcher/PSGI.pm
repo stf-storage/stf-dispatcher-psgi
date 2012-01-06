@@ -272,6 +272,15 @@ sub modify_object {
         return $req->new_response(500, ["Content-Type" => "text/plain"], [ "Failed to find bucket" ] );
     }
 
+    my $is_valid = $self->impl->is_valid_object( {
+        bucket      => $bucket,
+        object_name => $object_name,
+        request     => $req,
+    });
+    if (! $is_valid) {
+        return $req->new_response(404, [], [ "No such object" ]);
+    }
+
     my $ret = $self->impl->modify_object( {
         bucket      => $bucket,
         object_name => $object_name,
@@ -281,7 +290,11 @@ sub modify_object {
         request     => $req,
     } );
 
-    return $req->new_response(204, [], []);
+    if ($ret) {
+        return $req->new_response(204, [], []);
+    } else {
+        return $req->new_response(500, ["Content-Type" => "text/plain"], [ "Failed to modify object" ]);
+    }
 }
 
 1;
