@@ -1,6 +1,7 @@
 package STF::Dispatcher::Impl::File;
 use strict;
 use HTTP::Date ();
+use File::Copy ();
 use File::Temp ();
 use File::Spec;
 use File::Path ();
@@ -96,6 +97,25 @@ sub delete_object {
     my $file = File::Spec->catfile( $args->{bucket}, $args->{object_name} );
     return unless -f $file;
     unlink $file;
+}
+
+sub rename_object {
+    my ($self, $args) = @_;
+
+    my $source = File::Spec->catfile( $args->{source_bucket}, $args->{source_object_name} );
+    my $dest   = File::Spec->catfile( $args->{destination_bucket}, $args->{destination_object_name } );
+    my $dir  = File::Basename::dirname( $dest );
+    if (! -d $dir ) {
+        if (! File::Path::make_path( $dir, { mode => 0755 } ) ) {
+            Carp::croak( "Failed to create directory $dir: $!" );
+        }
+    }
+
+    if (! File::Copy::move( $source, $dest )) {
+        Carp::croak("Failed to move from '$source' to '$dest': $!");
+    }
+
+    return 1;
 }
 
 package

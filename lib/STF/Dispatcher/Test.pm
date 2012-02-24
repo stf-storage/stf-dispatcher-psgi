@@ -176,6 +176,108 @@ sub run_tests {
     }
     is $res->header('X-Content-Type-Options'), 'nosniff', "nosniff is on";
 
+    # Create another object (use same name, cause we're lazy)
+    $res = $cb->(
+        PUT "http://127.0.0.1/$bucket_name/$object_name",
+            "X-Replication-Count" => 3,
+            "Content-Type" => "text/plain",
+            Content => $content,
+    );
+    if (! ok $res->is_success, "object creation request was successful") {
+        diag $res->as_string;
+    }
+
+    {
+        my $move_req = HTTP::Request->new(MOVE => "http://127.0.0.1/$bucket_name/$object_name");
+        $move_req->header( "X-STF-Move-Destination" => "/$bucket_name/$object_name.2" );
+        $res = $cb->( $move_req );
+        if (! is $res->code, 201, "move should result in 201" ) {
+            diag $res->as_string;
+        }
+        
+        $res = $cb->(
+            GET "http://127.0.0.1/$bucket_name/$object_name",
+        );
+        if (! is $res->code, 404, "get after move is 404" ) {
+            diag $res->as_string;
+        }
+
+        $res = $cb->(
+            GET "http://127.0.0.1/$bucket_name/$object_name.2",
+        );
+        if (! is $res->code, 200, "get new url after move is 200" ) {
+            diag $res->as_string;
+        }
+
+        $move_req = HTTP::Request->new(MOVE => "http://127.0.0.1/$bucket_name/$object_name.2" );
+        $move_req->header( "X-STF-Move-Destination" => "/$bucket_name.2/$object_name" );
+        $res = $cb->( $move_req );
+        if (! is $res->code, 500, "move to non-existent bucket should fail" ) {
+            diag $res->as_string;
+        }
+
+        $res = $cb->( PUT "http://127.0.0.1/$bucket_name.2" );
+        if (! is $res->code, 201, "create new bucket should be 201" ) {
+            diag $res->as_string;
+        }
+
+        $res = $cb->( $move_req );
+        if (! is $res->code, 201, "move to another bucket should be 201" ) {
+            diag $res->as_string;
+        }
+
+    }
+
+    # Create another object (use same name, cause we're lazy)
+    $res = $cb->(
+        PUT "http://127.0.0.1/$bucket_name/$object_name",
+            "X-Replication-Count" => 3,
+            "Content-Type" => "text/plain",
+            Content => $content,
+    );
+    if (! ok $res->is_success, "object creation request was successful") {
+        diag $res->as_string;
+    }
+
+    {
+        my $move_req = HTTP::Request->new(MOVE => "http://127.0.0.1/$bucket_name/$object_name");
+        $move_req->header( "X-STF-Move-Destination" => "/$bucket_name/$object_name.2" );
+        $res = $cb->( $move_req );
+
+        
+    }
+
+    # non-existent bucket deletion should fail
+    $res = $cb->(
+        DELETE "http://127.0.0.1/$bucket_name-non-existent"
+    );
+    if (! is $res->code, 404, "bucket deletion request was 404") {
+        diag $res->as_string;
+    }
+
+    # normal bucket deletion
+    $res = $cb->(
+        DELETE "http://127.0.0.1/$bucket_name"
+    );
+    if (! is $res->code, 204, "bucket deletion request was 204") {
+        diag $res->as_string;
+    }
+}
+
+1;
+
+__END__
+
+=head1 NAME
+
+STF::Dispatcher::Test - Basic Tests For STF Implementations
+
+=head1 SYNOPSIS
+
+    use Test::More;
+    use STF::Dispatcher::Test;
+    }
+
     # non-existent bucket deletion should fail
     $res = $cb->(
         DELETE "http://127.0.0.1/$bucket_name-non-existent"

@@ -75,6 +75,12 @@ sub delete_object {
     delete $args->{bucket}->{ $args->{object_name} };
 }
 
+sub rename_object {
+    my ($self, $args) = @_;
+    $args->{ destination_bucket }->{ $args->{ destination_object_name } } =
+        delete $args->{source_bucket}->{ $args->{source_object_name} };
+}
+
 package
     STF::Dispatcher::Impl::Hash::Object;
 use strict;
