@@ -75,6 +75,18 @@ sub delete_object {
     delete $args->{bucket}->{ $args->{object_name} };
 }
 
+sub rename_bucket {
+    my ($self, $args) = @_;
+
+    my $bucket = $args->{bucket};
+    my $name   = $args->{name};
+
+    if ( $self->buckets->{ $name }) {
+        return;
+    }
+    $self->buckets->{ $name } = delete $self->buckets->{ $bucket->{name} };
+}
+
 sub rename_object {
     my ($self, $args) = @_;
     $args->{ destination_bucket }->{ $args->{ destination_object_name } } =

@@ -1,9 +1,12 @@
 Changes
 =======
 
-1.09 -
+1.10 -
     * Remove STF_DEBUG constant
     * Remove unnecessary print statements to STDERR
+
+1.09 - May 02 2012
+    * Add support to rename buckets, using MOVE requests
 
 1.08 - Feb 25 2011
     * Various minor fixes, mainly concerning error status cases

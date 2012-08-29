@@ -1,6 +1,6 @@
 package STF::Dispatcher::PSGI;
 use strict;
-our $VERSION = '1.08';
+our $VERSION = '1.09';
 use Carp ();
 use HTTP::Date ();
 use Plack::Request;
@@ -304,6 +304,26 @@ sub rename_object {
     if (! $bucket) {
        # XXX should be 403?
         return $req->new_response(500, ["Content-Type" => "text/plain"], [ "Failed to find source bucket" ] );
+    }
+
+    if (! $object_name) {
+        my ($dest_bucket, $dest_object) = $self->parse_names( $req->header( STF_MOVE_OBJECT_HEADER ) );
+        if (! $dest_bucket) {
+            return $req->new_response(500, ["Content-Type" => "text/plain"], ["Destination bucket name was not specified"]);
+        }
+        if ($dest_object) {
+            return $req->new_response(500, ["Content-Type" => "text/plain"], ["Destination contains object name"]);
+        }
+
+        my $ok = $self->impl->rename_bucket({
+            bucket => $bucket,
+            name   => $dest_bucket
+        });
+        if ($ok) {
+            return $req->new_response(201, [], ["Moved"]);
+        } else {
+            return $req->new_response(500, [], ["Failed to rename bucket"]);
+        }
     }
 
     my $is_valid = $self->impl->is_valid_object( {

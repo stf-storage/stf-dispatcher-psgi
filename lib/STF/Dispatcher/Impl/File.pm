@@ -99,6 +99,19 @@ sub delete_object {
     unlink $file;
 }
 
+sub rename_bucket {
+    my ($self, $args) = @_;
+
+    my $bucket = $args->{bucket};
+    my $name   = $args->{name};
+    my $source = File::Spec->catdir($bucket);
+    my $destination = File::Spec->catdir($self->storage_path, $name);
+    if (-e $destination) {
+        return;
+    }
+    File::Copy::move( $source, $destination );
+}
+
 sub rename_object {
     my ($self, $args) = @_;
 

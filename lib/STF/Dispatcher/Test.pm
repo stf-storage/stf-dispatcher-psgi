@@ -187,6 +187,8 @@ sub run_tests {
         diag $res->as_string;
     }
 
+    # XXX Rename object/bucket
+    note "Testing MOVE object/bucket";
     {
         my $move_req = HTTP::Request->new(MOVE => "http://127.0.0.1/$bucket_name/$object_name");
         $move_req->header( "X-STF-Move-Destination" => "/$bucket_name/$object_name.2" );
@@ -209,6 +211,7 @@ sub run_tests {
             diag $res->as_string;
         }
 
+        # Move from bucket_name to bucket_name.2
         $move_req = HTTP::Request->new(MOVE => "http://127.0.0.1/$bucket_name/$object_name.2" );
         $move_req->header( "X-STF-Move-Destination" => "/$bucket_name.2/$object_name" );
         $res = $cb->( $move_req );
@@ -226,6 +229,28 @@ sub run_tests {
             diag $res->as_string;
         }
 
+        # Rename bucket_name.2 to bucket_name. this should fail
+
+        $move_req = HTTP::Request->new(MOVE => "http://127.0.0.1/$bucket_name.2");
+        $move_req->header( "X-STF-Move-Destination" => "/$bucket_name" );
+        $res = $cb->( $move_req );
+        if (! is $res->code, 500, "renaming bucket to an existing one should fail") {
+            diag $res->as_string;
+        }
+
+        # Rename bucket_name.2 to bucket_name.3. This should succeed
+        $move_req->header( "X-STF-Move-Destination" => "/$bucket_name.3" );
+        $res = $cb->( $move_req );
+        if (! is $res->code, 201, "renaming bucket to a new name should be 201" ) {
+            diag $res->as_string;
+        }
+
+        # Get the object for sanity
+        $res = $cb->( GET "http://127.0.0.1/$bucket_name.3/$object_name" );
+        if (! is $res->code, 200, "GET on the renamed bucket + object should be 200" ) {
+            diag $res->as_string;
+        }
+        is $res->content, $content, "content matches";
     }
 
     # Create another object (use same name, cause we're lazy)
@@ -237,45 +262,6 @@ sub run_tests {
     );
     if (! ok $res->is_success, "object creation request was successful") {
         diag $res->as_string;
-    }
-
-    {
-        my $move_req = HTTP::Request->new(MOVE => "http://127.0.0.1/$bucket_name/$object_name");
-        $move_req->header( "X-STF-Move-Destination" => "/$bucket_name/$object_name.2" );
-        $res = $cb->( $move_req );
-
-        
-    }
-
-    # non-existent bucket deletion should fail
-    $res = $cb->(
-        DELETE "http://127.0.0.1/$bucket_name-non-existent"
-    );
-    if (! is $res->code, 404, "bucket deletion request was 404") {
-        diag $res->as_string;
-    }
-
-    # normal bucket deletion
-    $res = $cb->(
-        DELETE "http://127.0.0.1/$bucket_name"
-    );
-    if (! is $res->code, 204, "bucket deletion request was 204") {
-        diag $res->as_string;
-    }
-}
-
-1;
-
-__END__
-
-=head1 NAME
-
-STF::Dispatcher::Test - Basic Tests For STF Implementations
-
-=head1 SYNOPSIS
-
-    use Test::More;
-    use STF::Dispatcher::Test;
     }
 
     # non-existent bucket deletion should fail
