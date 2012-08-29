@@ -1,6 +1,10 @@
 Changes
 =======
 
+1.09 -
+    * Remove STF_DEBUG constant
+    * Remove unnecessary print statements to STDERR
+
 1.08 - Feb 25 2011
     * Various minor fixes, mainly concerning error status cases
     * Add support for MOVE

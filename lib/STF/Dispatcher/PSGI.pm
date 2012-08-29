@@ -11,7 +11,6 @@ use Class::Accessor::Lite
     rw => [ qw(impl nosniff_header) ]
 ;
 use constant +{
-    STF_DEBUG                         => $ENV{STF_DEBUG},
     STF_REPLICATION_HEADER            => 'X-STF-Replication-Count',
     STF_REPLICATION_HEADER_DEPRECATED => 'X-Replication-Count',
     STF_RECURSIVE_DELETE_HEADER       => 'X-STF-Recursive-Delete',
@@ -62,14 +61,8 @@ sub handle_psgi {
     } elsif ($method eq 'PUT') {
         my $cl = $env->{CONTENT_LENGTH} || 0;
         if ( $cl == 0 ) {
-            if (STF_DEBUG) {
-                print STDERR "[Dispatcher] Content-Length = 0, creating bucket\n";
-            }
             $res = $self->create_bucket( $req );
         } else {
-            if (STF_DEBUG) {
-                print STDERR "[Dispatcher] Content-Length > 0, creating object\n";
-            }
             $res = $self->create_object( $req );
         }
     } elsif ($method eq 'DELETE') {
@@ -88,9 +81,6 @@ sub handle_psgi {
 sub parse_names {
     my ($self, $path) = @_;
     if ( $path !~ m{^/([^/]+)(?:/(.+)$)?} ) {
-        if (STF_DEBUG) {
-            print STDERR "[Dispatcher] Could not parse bucket/object name from given path\n";
-        }
         return ();
     }
     return ($1, $2);
