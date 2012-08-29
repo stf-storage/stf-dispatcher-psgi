@@ -9,7 +9,7 @@ sub cpanm (@) {
     goto &mysystem;
 }
 
-sub test_binding {
+sub run_tests {
     cpanm("--installdeps", ".");
     mysystem("perl", "Makefile.PL");
     mysystem("make", "test");
