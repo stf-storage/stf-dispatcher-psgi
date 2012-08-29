@@ -1,7 +1,7 @@
 Changes
 =======
 
-1.10 -
+1.10 - Aug 29 2012
     * Remove STF_DEBUG constant
     * Remove unnecessary print statements to STDERR
 
