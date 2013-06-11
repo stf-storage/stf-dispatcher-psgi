@@ -36,6 +36,15 @@ sub run_tests {
     }
 
     $res = $cb->(
+        GET "http://127.0.0.1/$bucket_name/should_fail"
+    );
+    if (ok ! $res->is_success, "bucket fetch with non-existing bucket should fail") {
+        is $res->code, 404, "HTTP status should be 404";
+    } else {
+        diag $res->as_string;
+    } 
+        
+    $res = $cb->(
         PUT "http://127.0.0.1/$bucket_name"
     );
     if (! ok $res->is_success, "bucket creation request was successful") {
