@@ -73,7 +73,7 @@
          "web" : "https://github.com/stf-storage/stf-dispatcher-psgi"
       }
    },
-   "version" : "1.10",
+   "version" : "1.11",
    "x_contributors" : [
       "Daisuke Maki <lestrrat+github@gmail.com>"
    ]
