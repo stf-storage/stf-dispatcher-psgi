@@ -1,6 +1,10 @@
 Changes
 =======
 
+1.11 Jun 11 2013
+    * GET /foo/bar.tx WHERE /foo is a non-existing bucket used to
+      return 500, but now returns 404
+
 1.10 - Aug 29 2012
     * Remove STF_DEBUG constant
     * Remove unnecessary print statements to STDERR
