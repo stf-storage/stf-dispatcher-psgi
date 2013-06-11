@@ -15,5 +15,4 @@ recommends 'Net::STF::Client';
 test_requires 'HTTP::Request::Common';
 test_requires 'Test::More';
 
-auto_set_repository;
 WriteAll;
