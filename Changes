@@ -1,7 +1,9 @@
 Changes
 =======
 
-1.11 Jun 11 2013
+{{$NEXT}}
+
+1.11 2013-06-11T05:56:51Z
     * GET /foo/bar.tx WHERE /foo is a non-existing bucket used to
       return 500, but now returns 404
 
