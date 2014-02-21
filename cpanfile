@@ -1,6 +1,7 @@
 requires 'Class::Accessor::Lite';
 requires 'HTTP::Date';
 requires 'Plack';
+requires 'Plack::MIME';
 requires 'Plack::Middleware::Header';
 requires 'Plack::Request';
 requires 'Scalar::Util';
