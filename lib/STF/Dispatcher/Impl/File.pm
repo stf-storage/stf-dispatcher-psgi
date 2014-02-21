@@ -5,6 +5,7 @@ use File::Copy ();
 use File::Temp ();
 use File::Spec;
 use File::Path ();
+use Plack::MIME;
 use Class::Accessor::Lite
     ro => [ qw(buckets storage_path) ]
 ;
@@ -84,6 +85,7 @@ sub get_object {
 
     return STF::Dispatcher::Impl::File::Object->new(
         modified_on => $stat[9],
+        content_type => Plack::MIME->mime_type($file) || 'text/plain',
         content => do { local $/; <$fh> },
     );
 }

@@ -26,7 +26,7 @@ sub run_tests {
         return join '', map { $chars[rand @chars] } 1..$len;
     };
     my $bucket_name = $randstr->(8);
-    my $object_name = join "/", map { $randstr->(8) } 1..4;
+    my $object_name = (join "/", map { $randstr->(8) } 1..4) . '.txt';
 
     $res = $cb->(
         PUT "http://127.0.0.1/$bucket_name/should_fail"
