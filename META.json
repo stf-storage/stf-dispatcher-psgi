@@ -56,6 +56,7 @@
             "Class::Accessor::Lite" : "0",
             "HTTP::Date" : "0",
             "Plack" : "0",
+            "Plack::MIME" : "0",
             "Plack::Middleware::Header" : "0",
             "Plack::Request" : "0",
             "Scalar::Util" : "0"
@@ -74,7 +75,7 @@
          "web" : "https://github.com/stf-storage/stf-dispatcher-psgi"
       }
    },
-   "version" : "1.11",
+   "version" : "1.12",
    "x_contributors" : [
       "Daisuke Maki <lestrrat+github@gmail.com>"
    ]
